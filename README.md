@@ -1,51 +1,91 @@
+# Chapter 19: Reinforcement Learning
 
-##  Chapter 19: Reinforcement Learning for Decision Making in Complex Environments
+This repository contains the current GridWorld reinforcement-learning example from Chapter 19, “Reinforcement Learning for Decision Making in Complex Environments.” The agent learns with tabular Q-learning and the environment is rendered with Pygame.
 
+## Contents
 
-### Chapter Outline
+```text
+.
+├── gridworld/
+│   ├── agent.py                # Q-learning agent and Q-table
+│   ├── gridworld_env.py        # 10x10 Pygame environment
+│   ├── qlearning.py            # Training loop and learning plot
+│   └── q-learning-history.png  # Generated learning-history plot
+├── .github/                    # GitHub workflows, templates, and policies
+├── .python-version             # Project Python version
+├── requirements.txt            # Frozen project environment
+├── LICENSE
+└── README.md
+```
 
-- Introduction: learning from experience
-  - Understanding reinforcement learning
-  - Defining the agent-environment interface of a reinforcement learning system
-  - The theoretical foundations of RL
-    - Markov decision processes
-    - The mathematical formulation of Markov decision processes
-    - Visualization of a Markov process
-    - Episodic versus continuing tasks
-  - RL terminology: return, policy, and value function
-    - The return
-    - Policy
-    - Value function
-  - Dynamic programming using the Bellman equation
-- Reinforcement learning algorithms
-  - Dynamic programming
-    - Policy evaluation – predicting the value function with dynamic programming
-    - Improving the policy using the estimated value function
-    - Policy iteration
-    - Value iteration
-  - Reinforcement learning with Monte Carlo
-    - State-value function estimation using MC
-    - Action-value function estimation using MC
-    - Finding an optimal policy using MC control
-    - Policy improvement – computing the greedy policy from the action-value function
-  - Temporal difference learning
-    - TD prediction
-    - On-policy TD control (SARSA)
-    - Off-policy TD control (Q-learning)
-- Implementing our first RL algorithm
-  - Introducing the OpenAI Gym toolkit
-    - Working with the existing environments in OpenAI Gym
-  - A grid world example
-    - Implementing the grid world environment in OpenAI Gym
-  - Solving the grid world problem with Q-learning
-    - Implementing the Q-learning algorithm
-- A glance at deep Q-learning
-  - Training a DQN model according to the Q-learning algorithm
-    - Replay memory
-    - Determining the target values for computing the loss
-  - Implementing a deep Q-learning algorithm
-- Chapter and book summary
+## Requirements
 
-**Please refer to the [README.md](../ch01/README.md) file in [`../ch01`](../ch01) for more information about running the code examples.**
+- Python 3.13 or a compatible recent Python version
+- A desktop session for the Pygame window
+- CPU is supported; GPU/CUDA is not required
 
+The checked-in requirements are a freeze of the working CPU environment. For a fresh virtual environment:
 
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+python -m pip check
+```
+
+To confirm that PyTorch is using the CPU build:
+
+```bash
+python -c "import torch; print(torch.__version__); print(torch.cuda.is_available())"
+```
+
+The final line should print `False` in the CPU setup.
+
+## Run GridWorld
+
+Run commands from the `gridworld` directory because the training script imports its neighboring modules directly:
+
+```bash
+cd gridworld
+python gridworld_env.py
+```
+
+This opens a Pygame window and demonstrates random movement in the 10x10 environment.
+
+Run tabular Q-learning:
+
+```bash
+python qlearning.py
+```
+
+The environment is a 10x10 grid. One gold cell and five trap cells are chosen once when the environment starts, remain fixed across training episodes, and are regenerated on the next process start. The learning chart is written to `gridworld/q-learning-history.png`.
+
+## Development checks
+
+```bash
+python -m compileall -q gridworld
+python -m pip check
+```
+
+Headless environments can validate imports and rendering with:
+
+```bash
+cd gridworld
+SDL_VIDEODRIVER=dummy python -c "from gridworld_env import GridWorldEnv; env = GridWorldEnv(); frame = env.render('rgb_array'); assert frame is not None; env.close()"
+```
+
+## Contributing
+
+Bug reports, documentation improvements, and small educational enhancements are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) before opening an issue or pull request.
+
+## Community and security
+
+- [Code of Conduct](CODE_OF_CONDUCT.md)
+- [Security policy](SECURITY.md)
+- [Support](SUPPORT.md)
+- [Governance](GOVERNANCE.md)
+
+## License
+
+This project is distributed under the [MIT License](LICENSE).

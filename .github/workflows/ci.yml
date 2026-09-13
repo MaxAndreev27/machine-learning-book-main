@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Compile Python examples
+        run: python -m compileall -q cartpole gridworld
+
+      - name: Validate notebook JSON and Python cells
+        run: |
+          python - <<'PY'
+          import ast
+          import json
+          from pathlib import Path
+
+          notebook = json.loads(Path("ch19.ipynb").read_text())
+          for index, cell in enumerate(notebook["cells"]):
+              if cell.get("cell_type") == "code":
+                  ast.parse("".join(cell.get("source", [])), filename=f"ch19.ipynb cell {index}")
+          print("Notebook validation passed")
+          PY
