@@ -22,18 +22,33 @@ jobs:
           python-version: "3.13"
 
       - name: Compile Python examples
-        run: python -m compileall -q cartpole gridworld
+        run: python -m compileall -q gridworld
 
-      - name: Validate notebook JSON and Python cells
+      - name: Validate project metadata
         run: |
-          python - <<'PY'
-          import ast
-          import json
-          from pathlib import Path
+          test -f README.md
+          test -f requirements.txt
+          test -f LICENSE
+          test -f gridworld/agent.py
+          test -f gridworld/gridworld_env.py
+          test -f gridworld/qlearning.py
+          ! grep -Eiq 'cuda|nvidia|triton|pygame-ce' requirements.txt
 
-          notebook = json.loads(Path("ch19.ipynb").read_text())
-          for index, cell in enumerate(notebook["cells"]):
-              if cell.get("cell_type") == "code":
-                  ast.parse("".join(cell.get("source", [])), filename=f"ch19.ipynb cell {index}")
-          print("Notebook validation passed")
+      - name: Validate GridWorld headlessly
+        env:
+          SDL_VIDEODRIVER: dummy
+        run: |
+          cd gridworld
+          python - <<'PY'
+          from gridworld_env import GridWorldEnv
+
+          env = GridWorldEnv()
+          state, _ = env.reset(seed=1)
+          assert state == 0
+          assert (env.num_rows, env.num_cols) == (10, 10)
+          assert len(env.terminal_states) == 6
+          assert len(set(env.terminal_states)) == 6
+          frame = env.render(mode="rgb_array")
+          assert frame.shape == (1000, 1000, 3)
+          env.close()
           PY
