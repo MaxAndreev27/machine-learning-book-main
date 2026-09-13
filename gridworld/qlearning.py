@@ -56,7 +56,7 @@ def plot_learning_history(history):
 
 
 if __name__ == "__main__":
-    env = GridWorldEnv(num_rows=5, num_cols=6)
+    env = GridWorldEnv(num_rows=8, num_cols=8, num_traps=7)
     agent = Agent(env)
     history = run_qlearning(agent, env)
     env.close()

@@ -50,6 +50,9 @@ my_awesome_model/
 # PyTorch model files
 *.pt
 
+# Generated Q-learning plot
+gridworld/q-learning-history.png
+
 # OS-specific files
 .DS_Store
 Thumbs.db

@@ -8,7 +8,7 @@ This repository contains the current GridWorld reinforcement-learning example fr
 .
 ├── gridworld/
 │   ├── agent.py                # Q-learning agent and Q-table
-│   ├── gridworld_env.py        # 10x10 Pygame environment
+│   ├── gridworld_env.py        # 8x8 Pygame environment
 │   ├── qlearning.py            # Training loop and learning plot
 │   └── q-learning-history.png  # Generated learning-history plot
 ├── .github/                    # GitHub workflows, templates, and policies
@@ -51,7 +51,7 @@ cd gridworld
 python gridworld_env.py
 ```
 
-This opens a Pygame window and demonstrates random movement in the 10x10 environment.
+This opens a Pygame window and demonstrates random movement in the 8x8 environment.
 
 Run tabular Q-learning:
 
@@ -59,7 +59,7 @@ Run tabular Q-learning:
 python qlearning.py
 ```
 
-The environment is a 10x10 grid. One gold cell and five trap cells are chosen once when the environment starts, remain fixed across training episodes, and are regenerated on the next process start. The learning chart is written to `gridworld/q-learning-history.png`.
+The environment is an 8x8 grid. One gold cell and seven trap cells are chosen once when the environment starts, remain fixed across training episodes, and are regenerated on the next process start. Seven traps make the search challenging while the environment's reachability check guarantees that the gold remains accessible. The learning chart is written to `gridworld/q-learning-history.png`.
 
 ## Development checks
 

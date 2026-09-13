@@ -1,4 +1,5 @@
 import time
+from collections import deque
 
 import numpy as np
 import pygame
@@ -8,9 +9,10 @@ MARGIN = 10
 
 
 class GridWorldEnv:
-    def __init__(self, num_rows=10, num_cols=10, delay=0.05):
+    def __init__(self, num_rows=8, num_cols=8, num_traps=7, delay=0.05):
         self.num_rows = num_rows
         self.num_cols = num_cols
+        self.num_traps = num_traps
 
         self.delay = delay
 
@@ -40,22 +42,54 @@ class GridWorldEnv:
         return state in self.terminal_states
 
     def _place_targets(self):
-        start_row, start_col = self.state2grid_dict[0]
+        opposite_row = self.num_rows // 2
+        opposite_col = self.num_cols // 2
         gold_candidates = [
             state
             for state in range(1, self.nS)
-            if abs(self.state2grid_dict[state][0] - start_row)
-            + abs(self.state2grid_dict[state][1] - start_col)
-            >= 4
+            if self.state2grid_dict[state][0] >= opposite_row
+            and self.state2grid_dict[state][1] >= opposite_col
         ]
-        gold_state = int(self.rng.choice(gold_candidates))
 
-        trap_candidates = [state for state in range(1, self.nS) if state != gold_state]
-        trap_states = [
-            int(state)
-            for state in self.rng.choice(trap_candidates, size=5, replace=False)
-        ]
-        self.terminal_states = [gold_state] + trap_states
+        for _ in range(1000):
+            gold_state = int(self.rng.choice(gold_candidates))
+            trap_candidates = [
+                state for state in range(1, self.nS) if state != gold_state
+            ]
+            trap_states = [
+                int(state)
+                for state in self.rng.choice(
+                    trap_candidates, size=self.num_traps, replace=False
+                )
+            ]
+            if self._has_path_to_gold(gold_state, trap_states):
+                self.terminal_states = [gold_state] + trap_states
+                return
+
+        raise RuntimeError("Could not generate a reachable GridWorld layout")
+
+    def _has_path_to_gold(self, gold_state, trap_states):
+        blocked_states = set(trap_states)
+        visited_states = {0}
+        states_to_visit = deque([0])
+
+        while states_to_visit:
+            state = states_to_visit.popleft()
+            if state == gold_state:
+                return True
+
+            row, col = self.state2grid_dict[state]
+            for move in self.action_defs.values():
+                next_row, next_col = move(row, col)
+                next_state = self.grid2state_dict[(next_row, next_col)]
+                if (
+                    next_state not in blocked_states
+                    and next_state not in visited_states
+                ):
+                    visited_states.add(next_state)
+                    states_to_visit.append(next_state)
+
+        return False
 
     def reset(self, *, seed=None, options=None):
         if seed is not None:
@@ -200,7 +234,7 @@ class GridWorldEnv:
 
 
 if __name__ == "__main__":
-    env = GridWorldEnv(10, 10)
+    env = GridWorldEnv(8, 8)
     for i in range(1):
         s, _ = env.reset()
         env.render(mode="human", done=False)
