@@ -42,24 +42,20 @@ python -c "import torch; print(torch.__version__); print(torch.cuda.is_available
 
 The final line should print `False` in the CPU setup.
 
-## Run GridWorld
+## Start Here: Q-learning
 
-Run commands from the `gridworld` directory because the training script imports its neighboring modules directly:
+The main entry point is `gridworld/qlearning.py`. It runs the complete project example: the agent interacts with the GridWorld, learns a policy with tabular Q-learning, renders the environment in Pygame, and saves a learning-history plot.
+
+Run it from the `gridworld` directory because the training script imports its neighboring modules directly:
 
 ```bash
 cd gridworld
-python gridworld_env.py
-```
-
-This opens a Pygame window and demonstrates random movement in the 8x8 environment.
-
-Run tabular Q-learning:
-
-```bash
 python qlearning.py
 ```
 
 The environment is an 8x8 grid. One gold cell and seven trap cells are chosen once when the environment starts, remain fixed across training episodes, and are regenerated on the next process start. Seven traps make the search challenging while the environment's reachability check guarantees that the gold remains accessible. The learning chart is written to `gridworld/q-learning-history.png`.
+
+`gridworld/gridworld_env.py` contains the environment implementation used by Q-learning. It is not the primary program to run; launch `qlearning.py` first to see the complete learning example. The environment file can be run separately only when you want to inspect random movement without training.
 
 ## Development checks
 
