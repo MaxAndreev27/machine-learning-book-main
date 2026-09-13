@@ -48,10 +48,16 @@ jobs:
           env = GridWorldEnv()
           state, _ = env.reset(seed=1)
           assert state == 0
-          assert (env.num_rows, env.num_cols) == (10, 10)
-          assert len(env.terminal_states) == 6
-          assert len(set(env.terminal_states)) == 6
+          assert (env.num_rows, env.num_cols) == (8, 8)
+          assert env.nS == 64
+          assert env.num_traps == 7
+          assert len(env.terminal_states) == 8
+          assert len(set(env.terminal_states)) == 8
+          assert 0 not in env.terminal_states
           frame = env.render(mode="rgb_array")
-          assert frame.shape == (1000, 1000, 3)
+          assert frame.shape == (800, 800, 3)
+          layout = env.terminal_states.copy()
+          env.reset()
+          assert env.terminal_states == layout
           env.close()
           PY
