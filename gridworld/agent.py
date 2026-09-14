@@ -10,8 +10,8 @@ class Agent:
         learning_rate=0.01,
         discount_factor=0.9,
         epsilon_greedy=0.9,
-        epsilon_min=0.1,
-        epsilon_decay=0.95,
+        epsilon_min=0.01,
+        epsilon_decay=0.90,
     ):
         self.env = env
         self.lr = learning_rate
@@ -34,7 +34,7 @@ class Agent:
             action = perm_actions[perm_q_argmax]
         return action
 
-    def _learn(self, transition):
+    def learn(self, transition):
         s, a, r, next_s, done = transition
         q_val = self.q_table[s][a]
         if done:
@@ -45,9 +45,12 @@ class Agent:
         # Update the q_table
         self.q_table[s][a] += self.lr * (q_target - q_val)
 
-        # Adjust the epsilon
+    def end_episode(self):
+        """Reduce exploration after an episode, not after every move."""
         self._adjust_epsilon()
 
     def _adjust_epsilon(self):
-        if self.epsilon > self.epsilon_min:
-            self.epsilon *= self.epsilon_decay
+        self.epsilon = max(
+            self.epsilon_min,
+            self.epsilon * self.epsilon_decay,
+        )

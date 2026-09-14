@@ -22,12 +22,13 @@ def run_qlearning(agent, env, num_episodes=50):
             action = agent.choose_action(state)
             next_s, reward, terminated, truncated, _ = env.step(action)
             done = terminated or truncated
-            agent._learn(Transition(state, action, reward, next_s, done))
+            agent.learn(Transition(state, action, reward, next_s, done))
             env.render(mode="human", done=done)
             state = next_s
             n_moves += 1
             final_reward = reward
             if done:
+                agent.end_episode()
                 break
         history.append((n_moves, final_reward))
         print(f"Episode {episode}: Reward {final_reward:.2} #Moves {n_moves}")
