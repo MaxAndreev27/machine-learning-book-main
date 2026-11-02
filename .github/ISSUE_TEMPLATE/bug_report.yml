@@ -27,7 +27,7 @@ body:
     id: python
     attributes:
       label: Python version
-      placeholder: "3.13.13"
+      placeholder: "3.12.16"
     validations:
       required: true
   - type: input
@@ -47,7 +47,7 @@ body:
     attributes:
       label: Checks
       options:
-        - label: I ran `python -m pip check`.
+        - label: I ran `uv lock --check`.
           required: true
         - label: I searched existing issues.
           required: true

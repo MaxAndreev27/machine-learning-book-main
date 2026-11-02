@@ -16,7 +16,7 @@
 
 ```text
 python -m compileall -q cartpole gridworld
-python -m pip check
+uv lock --check
 ```
 
 ## Checklist

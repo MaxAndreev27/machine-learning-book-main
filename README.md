@@ -13,31 +13,28 @@ This repository contains the current GridWorld reinforcement-learning example fr
 │   └── q-learning-history.png  # Generated learning-history plot
 ├── .github/                    # GitHub workflows, templates, and policies
 ├── .python-version             # Project Python version
-├── requirements.txt            # Frozen project environment
+├── pyproject.toml              # Project metadata and dependencies (uv)
+├── uv.lock                     # Locked dependencies
 ├── LICENSE
 └── README.md
 ```
 
 ## Requirements
 
-- Python 3.13 or a compatible recent Python version
+- Python 3.12 or newer, managed with [uv](https://docs.astral.sh/uv/)
 - A desktop session for the Pygame window
 - CPU is supported; GPU/CUDA is not required
 
-The checked-in requirements are a freeze of the working CPU environment. For a fresh virtual environment:
+Dependencies are declared in `pyproject.toml` and locked in `uv.lock`. Create the environment with:
 
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install --upgrade pip
-python -m pip install -r requirements.txt
-python -m pip check
+uv sync
 ```
 
 To confirm that PyTorch is using the CPU build:
 
 ```bash
-python -c "import torch; print(torch.__version__); print(torch.cuda.is_available())"
+uv run python -c "import torch; print(torch.__version__); print(torch.cuda.is_available())"
 ```
 
 The final line should print `False` in the CPU setup.
@@ -50,7 +47,7 @@ Run it from the `gridworld` directory because the training script imports its ne
 
 ```bash
 cd gridworld
-python qlearning.py
+uv run python qlearning.py
 ```
 
 The environment is an 8x8 grid. One gold cell and seven trap cells are chosen once when the environment starts, remain fixed across training episodes, and are regenerated on the next process start. Seven traps make the search challenging while the environment's reachability check guarantees that the gold remains accessible. The learning chart is written to `gridworld/q-learning-history.png`.
@@ -60,8 +57,8 @@ The environment is an 8x8 grid. One gold cell and seven trap cells are chosen on
 ## Development checks
 
 ```bash
-python -m compileall -q gridworld
-python -m pip check
+uv run python -m compileall -q gridworld
+uv lock --check
 ```
 
 Headless environments can validate imports and rendering with:

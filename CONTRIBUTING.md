@@ -11,13 +11,10 @@ Thank you for helping improve this educational reinforcement-learning project.
 ## Development setup
 
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install --upgrade pip
-python -m pip install -r requirements.txt
+uv sync
 ```
 
-The project targets a CPU environment. Do not add CUDA or NVIDIA packages to the shared requirements file unless the project explicitly adopts a GPU profile.
+The project targets a CPU environment. Do not add CUDA or NVIDIA packages to the shared dependencies in `pyproject.toml` unless the project explicitly adopts a GPU profile.
 
 ## Making changes
 
@@ -32,8 +29,8 @@ The project targets a CPU environment. Do not add CUDA or NVIDIA packages to the
 Run the relevant checks before opening a pull request:
 
 ```bash
-python -m compileall -q cartpole gridworld
-python -m pip check
+uv run python -m compileall -q gridworld
+uv lock --check
 ```
 
 For GridWorld rendering in a headless environment:
